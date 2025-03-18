@@ -1,0 +1,47 @@
+import os
+import shutil
+import time
+
+# Path to the Downloads folder
+downloads_path = os.path.expanduser('~/Downloads')
+
+# Define the destination folders for different file types
+folders = {
+    'Documents': ['.pdf', '.docx', '.txt', '.pptx'],
+    'Images': ['.jpg', '.jpeg', '.png', '.gif', '.bmp'],
+    'Videos': ['.mp4', '.avi', '.mov', '.mkv'],
+    'Audio': ['.mp3', '.wav', '.flac'],
+    'Archives': ['.zip', '.tar', '.rar', '.7z']
+}
+
+# Create subfolders if they don't exist
+for folder in folders:
+    folder_path = os.path.join(downloads_path, folder)
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+
+# Function to move files based on their extension
+def organize_files():
+    # Loop through all files in the Downloads folder
+    for filename in os.listdir(downloads_path):
+        file_path = os.path.join(downloads_path, filename)
+        
+        # Skip directories
+        if os.path.isdir(file_path):
+            continue
+        
+        # Get the file extension
+        _, extension = os.path.splitext(filename)
+        
+        # Move the file to the corresponding folder based on its extension
+        for folder, extensions in folders.items():
+            if extension.lower() in extensions:
+                destination_folder = os.path.join(downloads_path, folder)
+                shutil.move(file_path, os.path.join(destination_folder, filename))
+                print(f"Moved {filename} to {folder}")
+                break
+
+# Run the file organization process every 5 seconds (you can increase the interval or schedule it)
+while True:
+    organize_files()
+    time.sleep(5)  # Check every 5 seconds
